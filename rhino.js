@@ -6,7 +6,7 @@
     }
 
     defaults = {
-	predef: ['Ext', 'PVE', 'PVE_vnc_console_event'],
+	predef: ['Ext', 'PVE', 'PVE_vnc_console_event', 'FormData'],
 	devel:      true,
 	'continue': true,   /// Allow continue statement
 	bitwise:    true,   //  Allow bitwise operators
