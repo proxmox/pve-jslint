@@ -40,7 +40,7 @@ install: rhinoed_jslint.js jslint
 	mkdir -p ${DESTDIR}/usr/share/${PACKAGE}
 	install -m 0644 rhinoed_jslint.js ${DESTDIR}/usr/share/${PACKAGE}/rhinoed_jslint.js
 	mkdir -p ${DESTDIR}/usr/bin
-	install -m 0755 jslint /usr/bin
+	install -m 0755 jslint ${DESTDIR}/usr/bin
 
 jslint.js download:
 	wget -O jslint.js http://jslint.com/jslint.js
