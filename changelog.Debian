@@ -1,3 +1,9 @@
+pve-jslint (1.0-4) unstable; urgency=low
+
+  * correctly include jslint file
+
+ -- Proxmox Support Team <support@proxmox.com>  Fri, 10 Apr 2015 07:08:31 +0200
+
 pve-jslint (1.0-3) unstable; urgency=low
 
   * add FromData to predefined NS
