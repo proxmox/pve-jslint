@@ -31,7 +31,7 @@ ${DEB}:
 	fakeroot dpkg-deb --build dest
 	mv dest.deb ${DEB}
 	rm -rf dest
-	lintian ${DEB}	
+	lintian ${DEB}
 
 rhinoed_jslint.js: jslint.js rhino.js
 	cat jslint.js rhino.js >$@.tmp
