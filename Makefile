@@ -27,7 +27,7 @@ ${DEB}:
 	echo "git clone git://git.proxmox.com/git/pve-jslint.git\\ngit checkout ${GITVERSION}" > dest/usr/share/doc/${PACKAGE}/SOURCE
 	install -m 0644 copyright dest/usr/share/doc/${PACKAGE}
 	install -m 0644 changelog.Debian dest/usr/share/doc/${PACKAGE}
-	gzip --best dest/usr/share/doc/${PACKAGE}/changelog.Debian
+	gzip -n --best dest/usr/share/doc/${PACKAGE}/changelog.Debian
 	dpkg-deb --build dest
 	mv dest.deb ${DEB}
 	rm -rf dest
