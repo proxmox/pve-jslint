@@ -14,8 +14,9 @@ all: ${DEB}
 dinstall: ${DEB}
 	dpkg -i ${DEB}
 
-.PHONY: ${DEB}
-${DEB} deb:
+.PHONY: deb
+deb: ${DEB}
+${DEB}:
 	make clean
 	rm -rf dest
 	mkdir dest
