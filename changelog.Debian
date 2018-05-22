@@ -1,3 +1,11 @@
+pve-jslint (1.0-5) unstable; urgency=medium
+
+  * collect all errors and show them only after checking all files
+
+  * add 'Proxmox' to allowed global variable list
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 22 May 2018 15:00:41 +0200
+
 pve-jslint (1.0-4) unstable; urgency=low
 
   * correctly include jslint file
