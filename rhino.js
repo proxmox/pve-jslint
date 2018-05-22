@@ -1,5 +1,7 @@
 (function (a) {
-    var e, i, input, filename, defaults;
+    var e, i, j, input, filename, defaults;
+    var error = 0;
+    var errorstring = '';
     if (!a[0]) {
         print("Usage: jslint.js file.js ...");
         quit(1);
@@ -29,24 +31,32 @@
 	input = readFile( filename );
 	if (!input) {
             print("jslint: Couldn't open file '" + filename + "'.");
-            quit(1);
+            if (error < 1) {
+		error = 1;
+	    }
+	    continue;
 	}
 
 	if (!JSLINT(input, defaults)) {
-            for (i = 0; i < JSLINT.errors.length; i += 1) {
-		e = JSLINT.errors[i];
+            for (j = 0; j < JSLINT.errors.length; j += 1) {
+		e = JSLINT.errors[j];
 		if (e) {
-                    print('[' + filename + '] Lint at line ' + e.line + ' character ' +
+                    errorstring += ('[' + filename + '] Lint at line ' + e.line + ' character ' +
                           e.character + ': ' + e.reason);
-                    print((e.evidence || '').
+		    errorstring += "\n";
+                    errorstring += ((e.evidence || '').
                           replace(/^\s*(\S*(\s+\S+)*)\s*$/, "$1"));
-                    print('');
+		    errorstring += "\n\n";
 		}
             }
-            quit(2);
+            if (error < 2) {
+		error = 2;
+		continue;
+	    }
 	} else {
             print("jslint: " + filename + " OK");
 	}
     }
-    quit();
+    print(errorstring);
+    quit(error);
 }(arguments));
