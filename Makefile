@@ -4,9 +4,16 @@ PACKAGERELEASE=5
 
 PKGREL=${VERSION}-${PACKAGERELEASE}
 DEB=${PACKAGE}_${PKGREL}_all.deb
-GITVERSION:=$(shell cat .git/refs/heads/master)
+GITVERSION:=$(shell git rev-parse HEAD)
 
-all: ${DEB}
+BUILDDIR ?= ${PACKAGE}-${VERSION}
+
+all:
+
+${BUILDDIR}: debian
+	rm -rf ${BUILDDIR}
+	rsync -a * ${BUILDDIR}
+	echo "git clone git://git.proxmox.com/git/pve-jslint.git\\ngit checkout $(GITVERSION)" > ${BUILDDIR}/debian/SOURCE
 
 .PHONY: dinstall
 dinstall: ${DEB}
@@ -14,21 +21,8 @@ dinstall: ${DEB}
 
 .PHONY: deb
 deb: ${DEB}
-${DEB}:
-	make clean
-	rm -rf dest
-	mkdir dest
-	make DESTDIR=`pwd`/dest install
-	mkdir dest/DEBIAN
-	sed -e 's/@PKGREL@/${PKGREL}/' <control.in >dest/DEBIAN/control
-	mkdir -p dest/usr/share/doc/${PACKAGE}
-	echo "git clone git://git.proxmox.com/git/pve-jslint.git\\ngit checkout ${GITVERSION}" > dest/usr/share/doc/${PACKAGE}/SOURCE
-	install -m 0644 copyright dest/usr/share/doc/${PACKAGE}
-	install -m 0644 changelog.Debian dest/usr/share/doc/${PACKAGE}
-	gzip -n --best dest/usr/share/doc/${PACKAGE}/changelog.Debian
-	fakeroot dpkg-deb --build dest
-	mv dest.deb ${DEB}
-	rm -rf dest
+${DEB}: ${BUILDDIR}
+	cd ${BUILDDIR}; dpkg-buildpackage -b -us -uc
 	lintian ${DEB}
 
 rhinoed_jslint.js: jslint.js rhino.js
@@ -36,9 +30,9 @@ rhinoed_jslint.js: jslint.js rhino.js
 	mv $@.tmp $@
 
 install: rhinoed_jslint.js jslint
-	mkdir -p ${DESTDIR}/usr/share/${PACKAGE}
+	install -d -m 0755 ${DESTDIR}/usr/share/${PACKAGE}
 	install -m 0644 rhinoed_jslint.js ${DESTDIR}/usr/share/${PACKAGE}/rhinoed_jslint.js
-	mkdir -p ${DESTDIR}/usr/bin
+	install -d -m 0755 ${DESTDIR}/usr/bin
 	install -m 0755 jslint ${DESTDIR}/usr/bin
 
 jslint.js download:
@@ -49,7 +43,7 @@ distclean: clean
 
 .PHONY: clean
 clean:
-	rm -rf *~ dest control rhinoed_jslint.js *.deb
+	rm -rf *~ ${BUILDDIR} rhinoed_jslint.js *.deb *.changes *.buildinfo
 
 .PHONY: upload
 upload: ${DEB}

@@ -1,0 +1,12 @@
+Source: pve-jslint
+Section: devel
+Priority: optional
+Maintainer: Proxmox Support Team <support@proxmox.com>
+Standards-Version: 3.9.8
+
+Package: pve-jslint
+Architecture: all
+Depends: rhino
+Description: JSLint for Proxmox Virtual Environment development
+ This package contains a version of jslint used to develop the Proxmox Virtual
+ Environment GUI.
