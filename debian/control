@@ -2,6 +2,8 @@ Source: pve-jslint
 Section: devel
 Priority: optional
 Maintainer: Proxmox Support Team <support@proxmox.com>
+Build-Depends: debhelper (>= 10~),
+               rsync
 Standards-Version: 3.9.8
 
 Package: pve-jslint

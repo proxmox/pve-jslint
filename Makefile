@@ -3,21 +3,19 @@ VERSION=1.0
 PACKAGERELEASE=5
 
 PKGREL=${VERSION}-${PACKAGERELEASE}
-DEB=${PACKAGE}_${PKGREL}_all.deb
-GITVERSION:=$(shell git rev-parse HEAD)
 
+DEB=${PACKAGE}_${PKGREL}_all.deb
+DSC=${PACKAGE}_${PKGREL}.dsc
+
+GITVERSION:=$(shell git rev-parse HEAD)
 BUILDDIR ?= ${PACKAGE}-${VERSION}
 
-all:
+all: ${DEB}
 
-${BUILDDIR}: debian
+${BUILDDIR}: src debian
 	rm -rf ${BUILDDIR}
-	rsync -a * ${BUILDDIR}
+	rsync -a src/ debian ${BUILDDIR}
 	echo "git clone git://git.proxmox.com/git/pve-jslint.git\\ngit checkout $(GITVERSION)" > ${BUILDDIR}/debian/SOURCE
-
-.PHONY: dinstall
-dinstall: ${DEB}
-	dpkg -i ${DEB}
 
 .PHONY: deb
 deb: ${DEB}
@@ -25,25 +23,24 @@ ${DEB}: ${BUILDDIR}
 	cd ${BUILDDIR}; dpkg-buildpackage -b -us -uc
 	lintian ${DEB}
 
-rhinoed_jslint.js: jslint.js rhino.js
-	cat jslint.js rhino.js >$@.tmp
-	mv $@.tmp $@
+.PHONY: dsc
+dsc: ${DSC}
+${DSC}: ${BUILDDIR}
+	cd ${BUILDDIR}; dpkg-buildpackage -S -us -uc -d -nc
+	lintian ${DSC}
 
-install: rhinoed_jslint.js jslint
-	install -d -m 0755 ${DESTDIR}/usr/share/${PACKAGE}
-	install -m 0644 rhinoed_jslint.js ${DESTDIR}/usr/share/${PACKAGE}/rhinoed_jslint.js
-	install -d -m 0755 ${DESTDIR}/usr/bin
-	install -m 0755 jslint ${DESTDIR}/usr/bin
+.PHONY: dinstall
+dinstall: ${DEB}
+	dpkg -i ${DEB}
 
-jslint.js download:
-	wget -O jslint.js http://jslint.com/jslint.js
+.PHONY: download
+src/jslint.js download:
+	wget -O src/jslint.js http://jslint.com/jslint.js
 
-.PHONY: distclean
+.PHONY: distclean clean
 distclean: clean
-
-.PHONY: clean
 clean:
-	rm -rf *~ ${BUILDDIR} rhinoed_jslint.js *.deb *.changes *.buildinfo
+	rm -rf *~ ${BUILDDIR} rhinoed_jslint.js *.deb *.dsc *.tar.gz *.changes *.buildinfo
 
 .PHONY: upload
 upload: ${DEB}
